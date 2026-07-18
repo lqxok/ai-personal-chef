@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: ai-personal-chef
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: DASHSCOPE_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: DASHSCOPE_BASE_URL
+        value: https://dashscope.aliyuncs.com/compatible-mode/v1
+      - key: MODEL_NAME
+        value: qwen3.5-plus
