@@ -1,5 +1,7 @@
 # AI 私厨 Agent
 
+[在线 Demo](https://ai-personal-chef.onrender.com) · [健康检查](https://ai-personal-chef.onrender.com/api/health)
+
 一个支持食材图片识别、联网菜谱搜索、多轮会话记忆和 SSE 流式输出的多模态 AI 私厨。
 
 ## 主要功能
