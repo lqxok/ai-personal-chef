@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="支持食材图片识别和联网菜谱搜索的 AI 私厨 Agent" />
+    <title>AI 私厨</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <div class="chef-logo" aria-hidden="true">🧑‍🍳</div>
+          <div>
+            <h1>AI 私厨</h1>
+            <p>看看冰箱里有什么，今天吃点不一样的</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button id="newChatButton" class="ghost-button" type="button">新对话</button>
+          <div class="online"><span></span>私厨在线</div>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <section id="messages" class="messages" aria-live="polite" aria-label="聊天记录">
+          <div id="welcome" class="welcome">
+            <div class="welcome-icons" aria-hidden="true">🥕 🍅 🥬</div>
+            <h2>嗨，今天想吃什么？</h2>
+            <p>上传一张食材照片，或者告诉我冰箱里有什么，我会帮你搭配适合的菜谱。</p>
+          </div>
+        </section>
+
+        <form id="chatForm" class="composer">
+          <div class="upload-row">
+            <label class="upload-button" for="imageInput">📷 选择食材照片</label>
+            <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp" />
+            <img id="imagePreview" class="image-preview" alt="待发送的食材图片预览" hidden />
+            <span id="imageName" class="image-name">未选择图片</span>
+            <span class="image-help">JPG / PNG / WebP，最大 5 MB</span>
+          </div>
+
+          <div class="input-row">
+            <textarea
+              id="messageInput"
+              maxlength="4000"
+              placeholder="例如：识别图片里的食材，看不清的不要猜，然后推荐三道 30 分钟内完成的家常菜……"
+            ></textarea>
+            <button id="sendButton" class="send-button" type="submit">发送 🍽️</button>
+          </div>
+
+          <div class="quick-prompts" aria-label="快捷提示词">
+            <button type="button" data-prompt="请根据现有食材推荐三道 30 分钟内完成的家常菜。">30 分钟家常菜</button>
+            <button type="button" data-prompt="请推荐三道高蛋白、少油的减脂餐，并标明大致热量。">高蛋白减脂餐</button>
+            <button type="button" data-prompt="请只使用我现有的食材推荐菜谱，缺少的调味料单独列出。">尽量不额外购买</button>
+          </div>
+        </form>
+
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </div>
+    </main>
+  </body>
+</html>
