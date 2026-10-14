@@ -125,8 +125,17 @@ async def home() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
 
 @app.get("/api/health", tags=["system"], summary="服务健康检查")
-async def health() -> dict[str, str]:
-    return {"status": "ok", "service": "ai-personal-chef"}
+async def health(request: Request) -> dict[str, object]:
+    settings: Settings | None = getattr(request.app.state, "settings", None)
+    payload: dict[str, object] = {"status": "ok", "service": "ai-personal-chef"}
+    if settings is not None:
+        # 暴露限流配置，便于确认线上是否已生效（该接口本身豁免限流）
+        payload["rate_limit"] = {
+            "per_minute": settings.rate_limit_per_minute,
+            "per_ip_per_day": settings.daily_limit_per_ip,
+            "total_per_day": settings.daily_limit_total,
+        }
+    return payload
 
 
 if __name__ == "__main__":

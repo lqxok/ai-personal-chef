@@ -116,6 +116,15 @@ class RateLimitMiddlewareTests(unittest.TestCase):
             )
         self.assertEqual(client.post(_COST_PATH, json={"message": "hi"}).status_code, 429)
 
+    def test_health_exposes_rate_limit_config(self) -> None:
+        """健康检查暴露限流配置，便于线上确认是否生效，且自身不受限流影响。"""
+        client = self._build_client(per_minute=7, per_ip=8, total=9)
+        body = client.get("/api/health").json()
+        self.assertEqual(body["status"], "ok")
+        self.assertEqual(
+            body["rate_limit"], {"per_minute": 7, "per_ip_per_day": 8, "total_per_day": 9}
+        )
+
     def test_global_daily_limit_returns_429(self) -> None:
         """即使伪造 X-Forwarded-For 换 IP，全局上限也会兜住。"""
         client = self._build_client(per_minute=1000, per_ip=1000, total=2)
