@@ -143,6 +143,22 @@ uv run python -m evals.run_evals --limit 3 --skip-images
 
 免费实例的文件系统可能在重启或重新部署后重置，因此在线 Demo 的 SQLite 对话历史不应视为永久数据。正式环境应改用持久化数据库或挂载持久磁盘。
 
+## 限流与成本保护
+
+本服务**没有登录**，公开部署时任何人拿到地址都能消耗你的 `DASHSCOPE_API_KEY` 额度。
+因此 [app/ratelimit.py](app/ratelimit.py) 做了三层**滑动窗口限流**——只对会真正调用模型的
+`POST /api/v1/chat/stream` 计「每日配额」；静态资源、首页与 `/api/health` 不受影响：
+
+| 层 | 环境变量 | 默认 | 作用 |
+| --- | --- | ---: | --- |
+| 分钟级（每 IP） | `RATE_LIMIT_PER_MINUTE` | 10 | 防突发刷接口 |
+| 每日级（每 IP） | `DAILY_LIMIT_PER_IP` | 20 | 单个访客的成本上限 |
+| 每日级（全局） | `DAILY_LIMIT_TOTAL` | 200 | 总成本硬上限；换 IP 也烧不穿 |
+
+超限统一返回 `429`。Render 这类平台前面有反向代理，真实访客 IP 取自 `X-Forwarded-For`。
+
+> 计数存在**进程内存**中，单实例有效，重启会清零；若要多实例部署，应换成 Redis 等共享存储。
+
 ## API
 
 ### 流式聊天
